@@ -166,7 +166,7 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-value">${stats.total_nodes.toLocaleString()}</div>
-                    <div class="stat-label">Total Nodes</div>
+                    <div class="stat-label">Total Listening Nodes</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">${filterPct}%</div>
@@ -178,7 +178,7 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">${bothPct}%</div>
-                    <div class="stat-label">Both Features</div>
+                    <div class="stat-label">Compact Fileters && V2 Transport</div>
                 </div>
             </div>
             <div class="chart-container">
@@ -221,7 +221,7 @@
                     pointBorderColor: '#fff',
                     pointBorderWidth: 2
                 }, {
-                    label: 'Both Features',
+                    label: 'Compact Filters && V2 Transport',
                     data: data.map(r => (r.stats.v2_and_filters / r.stats.total_nodes * 100)),
                     borderColor: '#747c84',
                     backgroundColor: 'rgba(116, 124, 132, 0.1)',
