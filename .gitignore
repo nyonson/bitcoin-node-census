@@ -2,4 +2,6 @@
 
 # Census Data
 site/census.jsonl
-site/favicon.svg
+
+# Nix
+flake.lock

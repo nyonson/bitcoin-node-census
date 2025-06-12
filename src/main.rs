@@ -43,7 +43,7 @@ enum Commands {
         #[arg(short = 'p', long, default_value = "8333")]
         port: u16,
         /// Maximum concurrent connections.
-        #[arg(short, long, default_value = "50")]
+        #[arg(short, long, default_value = "32")]
         concurrent: usize,
         /// Output format.
         #[arg(short, long, value_enum, default_value = "json")]
