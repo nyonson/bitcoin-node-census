@@ -17,6 +17,8 @@ mod stats;
 use report::{CensusReport, OutputFormat};
 use stats::NodeStats;
 
+const USER_AGENT: &str = concat!("/census:", env!("CARGO_PKG_VERSION"), "/");
+
 #[derive(Parser)]
 #[command(
     name = "bitcoin-node-census",
@@ -112,7 +114,8 @@ async fn run_census(
     let crawler = CrawlerBuilder::new(Network::Bitcoin)
         .with_max_concurrent_tasks(concurrent)
         .with_transport_policy(TransportPolicy::V2Preferred)
-        .with_protocol_version(70016) // Recent protocol version
+        .with_protocol_version(70016)
+        .with_user_agent(USER_AGENT)?
         .build();
 
     let ip_addr = tokio::net::lookup_host(format!("{address}:{port}"))
