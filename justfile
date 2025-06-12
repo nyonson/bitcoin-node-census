@@ -32,8 +32,8 @@ NIGHTLY_TOOLCHAIN := "nightly-2025-06-10"
   cargo test --all-features --all-targets
 
 # Run census.
-@run:
-  cargo run --release -- run --format json >> site/census.jsonl
+@run address port="8333":
+  cargo run --release -- run --address {{address}} --port {{port}} --format json >> site/census.jsonl
   echo "Census result appended to site/census.jsonl"
 
 # Publish a new version.

@@ -18,6 +18,10 @@
           version = (builtins.fromTOML (builtins.readFile ./Cargo.toml)).package.version;
           src = ./.;
           
+          cargoLock = {
+            lockFile = ./Cargo.lock;
+          };
+          
           # Copy static site files to share directory.
           postInstall = ''
             mkdir -p $out/share/site
