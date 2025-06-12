@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CENSUS</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        ::selection {
+            color: #c79595;
+            background-color: transparent;
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif;
+            background: #fff;
+            color: #1c2023;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 56rem;
+            margin: 0 auto;
+        }
+        
+        h1 { 
+            text-transform: uppercase;
+            text-decoration-line: underline;
+            text-decoration-color: #c79595;
+            font-size: clamp(2rem, 6vw, 3rem);
+            margin-bottom: 2rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            border: 0.125rem solid #1c2023;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0.25rem 0.25rem #1c2023;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1c2023;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: small;
+            color: #747c84;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-top: 3rem;
+            padding: 1rem;
+            border: 0.125rem solid #1c2023;
+            box-shadow: 0.25rem 0.25rem #1c2023;
+        }
+        
+        .error {
+            color: #c79595;
+            padding: 1rem;
+            text-align: center;
+            border: 0.125rem solid #c79595;
+            box-shadow: 0.5rem 0.5rem #FFFFFF, 0.5rem 0.5rem 0 0.125rem #C79595;
+            margin-right: 0.625rem;
+            font-family: monospace;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #747c84;
+            padding: 4rem;
+            font-size: small;
+            text-transform: uppercase;
+        }
+        
+        .separator {
+            color: #c79595;
+        }
+        
+        time {
+            font-size: x-small;
+            color: #747c84;
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bitcoin Node Census</h1>
+        
+        <div id="content">
+            <div class="loading">Loading census data...</div>
+        </div>
+    </div>
+    
+    <script>
+    async function loadCensusData() {
+        try {
+            const response = await fetch('census.jsonl');
+            if (!response.ok) {
+                throw new Error('Could not load census.jsonl');
+            }
+            
+            const text = await response.text();
+            const lines = text.trim().split('\n').filter(line => line);
+            const data = lines.map(line => JSON.parse(line));
+            
+            if (data.length === 0) {
+                throw new Error('No data found in census.jsonl');
+            }
+            
+            displayData(data);
+        } catch (error) {
+            document.getElementById('content').innerHTML = 
+                `<div class="error">Error: ${error.message}</div>`;
+        }
+    }
+    
+    function displayData(data) {
+        // Sort by timestamp
+        data.sort((a, b) => a.timestamp - b.timestamp);
+        
+        // Get latest data for stats
+        const latest = data[data.length - 1];
+        const stats = latest.stats;
+        
+        // Calculate percentages
+        const filterPct = (stats.compact_filters / stats.total_nodes * 100).toFixed(1);
+        const v2Pct = (stats.v2_transport / stats.total_nodes * 100).toFixed(1);
+        const bothPct = (stats.v2_and_filters / stats.total_nodes * 100).toFixed(1);
+        
+        // Format date
+        const date = new Date(latest.timestamp * 1000);
+        const formattedDate = date.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric'
+        });
+        
+        // Build HTML
+        const html = `
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">${stats.total_nodes.toLocaleString()}</div>
+                    <div class="stat-label">Total Nodes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${filterPct}%</div>
+                    <div class="stat-label">Compact Filters</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${v2Pct}%</div>
+                    <div class="stat-label">V2 Transport</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${bothPct}%</div>
+                    <div class="stat-label">Both Features</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="chart"></canvas>
+            </div>
+            <time>Last updated: ${formattedDate}</time>
+        `;
+        
+        document.getElementById('content').innerHTML = html;
+        
+        // Create chart
+        const ctx = document.getElementById('chart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(r => {
+                    const date = new Date(r.timestamp * 1000);
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                }),
+                datasets: [{
+                    label: 'Compact Filters',
+                    data: data.map(r => (r.stats.compact_filters / r.stats.total_nodes * 100)),
+                    borderColor: '#c79595',
+                    backgroundColor: 'rgba(199, 149, 149, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#c79595',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }, {
+                    label: 'V2 Transport',
+                    data: data.map(r => (r.stats.v2_transport / r.stats.total_nodes * 100)),
+                    borderColor: '#1c2023',
+                    backgroundColor: 'rgba(28, 32, 35, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#1c2023',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }, {
+                    label: 'Both Features',
+                    data: data.map(r => (r.stats.v2_and_filters / r.stats.total_nodes * 100)),
+                    borderColor: '#747c84',
+                    backgroundColor: 'rgba(116, 124, 132, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#747c84',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    borderDash: [5, 5]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                family: 'Inter',
+                                size: 12
+                            },
+                            color: '#1c2023',
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: '#1c2023',
+                        titleColor: '#f3f4f5',
+                        bodyColor: '#c7ccd1',
+                        borderColor: '#c79595',
+                        borderWidth: 1,
+                        titleFont: {
+                            family: 'Inter',
+                            size: 12,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            family: 'Inter',
+                            size: 11
+                        },
+                        padding: 12
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            },
+                            font: {
+                                family: 'Inter',
+                                size: 11
+                            },
+                            color: '#747c84'
+                        },
+                        grid: {
+                            color: '#e5e7eb',
+                            borderColor: '#1c2023',
+                            borderWidth: 2
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                family: 'Inter',
+                                size: 11
+                            },
+                            color: '#747c84'
+                        },
+                        grid: {
+                            display: false,
+                            borderColor: '#1c2023',
+                            borderWidth: 2
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Load data on page load
+    loadCensusData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+/target
+
+# Census Data
+site/census.jsonl
+site/favicon.svg
