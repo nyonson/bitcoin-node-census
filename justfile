@@ -4,6 +4,7 @@
 # required on the system in order to intercept the `cargo` commands and to install and use the appropriate toolchain with components. 
 
 NIGHTLY_TOOLCHAIN := "nightly-2025-06-10"
+STABLE_TOOLCHAIN := "1.87.0"
 
 @_default:
     just --list
@@ -23,17 +24,27 @@ NIGHTLY_TOOLCHAIN := "nightly-2025-06-10"
   cargo +{{toolchain}} check --no-default-features --all-targets
   cargo +{{toolchain}} check --all-features --all-targets
 
+# Attempt any auto-fixes for format and lints.
+@fix:
+  # Ensure the toolchain is installed and has the necessary components.
+  rustup component add --toolchain {{NIGHTLY_TOOLCHAIN}} rustfmt clippy
+  # No --check flag to actually apply formatting.
+  cargo +{{NIGHTLY_TOOLCHAIN}} fmt --all
+  # Adding --fix flag to apply suggestions with --allow-dirty.
+  cargo +{{NIGHTLY_TOOLCHAIN}} clippy --workspace --all-features --all-targets --fix --allow-dirty -- -D warnings
+
 # Run the test suite.
 @test:
   # Run all tests.
 
   # "--all-features" for highest coverage, assuming features are additive so no conflicts.
   # "--all-targets" runs `lib` (unit, integration), `bin`, `test`, `bench`, `example` tests, but not doc code. 
-  cargo test --all-features --all-targets
+  cargo +{{STABLE_TOOLCHAIN}} test --all-features --all-targets
 
 # Run census.
 @run address port="8333":
-  cargo run --release -- run --address {{address}} --port {{port}} --format json >> site/census.jsonl
+  # Simply appending data to the file since each run is a "full" (not incremental) view of the world. A data point.
+  cargo +{{STABLE_TOOLCHAIN}} run --release -- run --address {{address}} --port {{port}} --format json >> site/census.jsonl
   echo "Census result appended to site/census.jsonl"
 
 # Publish a new version.
