@@ -2,6 +2,3 @@
 
 # Census Data
 site/census.jsonl
-
-# Nix
-flake.lock
