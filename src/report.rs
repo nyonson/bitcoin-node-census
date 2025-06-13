@@ -97,7 +97,7 @@ impl fmt::Display for CensusReport {
         let stats = &self.stats;
         write!(
             f,
-            "nodes: {} | v2: {} ({:.1}%) | filters: {} ({:.1}%) | both: {} ({:.1}%)",
+            "nodes: {} | v2: {} ({:.1}%) | filters: {} ({:.1}%) | v2 & filters: {} ({:.1}%)",
             stats.total_nodes,
             stats.v2_transport,
             stats.percentage(stats.v2_transport),
