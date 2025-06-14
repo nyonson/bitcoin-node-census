@@ -8,6 +8,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 #[derive(Debug, Clone, Copy, ValueEnum)]
 pub enum OutputFormat {
     Json,
+    Jsonl,
     Csv,
 }
 
@@ -46,6 +47,7 @@ impl CensusReport {
     ) -> Result<(), Box<dyn std::error::Error>> {
         let content = match format {
             OutputFormat::Json => serde_json::to_string_pretty(self)?,
+            OutputFormat::Jsonl => serde_json::to_string(self)?,
             OutputFormat::Csv => self.format_csv()?,
         };
 

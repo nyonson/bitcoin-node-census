@@ -239,7 +239,7 @@
                   --address "${cfg.seedNode.address}" \
                   --port ${toString cfg.seedNode.port} \
                   --concurrent ${toString cfg.concurrent} \
-                  --format json \
+                  --format jsonl \
                   >> site/census.jsonl
                 
                 # Publish to GCP if configured.
