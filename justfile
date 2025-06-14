@@ -73,11 +73,11 @@ STABLE_TOOLCHAIN := "1.87.0"
   git tag -a v{{version}} -m "Release v{{version}}"
   git push {{remote}} v{{version}}
 
-# Serve site locally.
+# Serve report locally.
 @serve:
   cd site && python -m http.server 8000
 
-# Deploy site to GCP bucket.
+# Deploy report to GCP bucket.
 @deploy bucket:
   @echo "Deploying to {{bucket}}..."
   gcloud storage rsync --recursive --delete-unmatched-destination-objects site/ {{bucket}}/

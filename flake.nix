@@ -165,14 +165,17 @@
               after = [ "network.target" ];
               
               # Set the HOME env var to give the service
-              # a home at the data directory, and also tack
-              # on the GCP creds if set.
+              # a home at the data directory, and also set
+              # GCP credential environment variables if configured.
+              # - GOOGLE_APPLICATION_CREDENTIALS: for Google Cloud client libraries
+              # - CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: for gcloud CLI tool
               environment = mkMerge [
                 {
                   HOME = cfg.dataDir;
                 }
                 (mkIf (cfg.gcp.credentialsFile != null) {
                   GOOGLE_APPLICATION_CREDENTIALS = cfg.gcp.credentialsFile;
+                  CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE = cfg.gcp.credentialsFile;
                 })
               ];
               
