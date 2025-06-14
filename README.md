@@ -12,7 +12,9 @@
 
 ## About
 
-Crawl the bitcoin network and aggregate stats for easy tracking and viewing.
+Crawl the bitcoin network and aggregate stats for easy tracking.
+
+Data published at [census.yonson.dev](https://census.yonson.dev/).
 
 ## Usage
 
