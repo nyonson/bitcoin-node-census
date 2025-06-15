@@ -39,6 +39,8 @@ impl FeatureStats {
 pub struct NodeStats {
     pub features: FeatureStats,
     duration_seconds: u64,
+    /// Total number of nodes contacted (listening + non-listening).
+    total_contacted: usize,
 }
 
 impl NodeStats {
@@ -46,6 +48,7 @@ impl NodeStats {
         Self {
             features: FeatureStats::new(),
             duration_seconds: 0,
+            total_contacted: 0,
         }
     }
 
@@ -72,8 +75,17 @@ impl NodeStats {
         }
     }
 
+    /// Increment the total number of nodes contacted.
+    pub fn increment_contacted(&mut self) {
+        self.total_contacted += 1;
+    }
+
     pub fn total_nodes(&self) -> usize {
         self.features.total_nodes
+    }
+
+    pub fn total_contacted(&self) -> usize {
+        self.total_contacted
     }
 
     pub fn set_duration(&mut self, seconds: u64) {

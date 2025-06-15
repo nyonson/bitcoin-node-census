@@ -37,7 +37,7 @@
             text-transform: uppercase;
             text-decoration-line: underline;
             text-decoration-color: #c79595;
-            font-size: clamp(2rem, 8vw, 6rem);
+            font-size: clamp(3rem, 8vw, 6rem);
         }
 
         #content {
@@ -173,13 +173,16 @@
             day: 'numeric'
         });
         
-        // Build HTML
+        listeningNodesHtml = `
+            <div class="stat-card">
+                <div class="stat-value">${stats.total_nodes.toLocaleString()}</div>
+                <div class="stat-label">Listening Nodes<br><small style="color: #a0a8b0; font-weight: normal;">out of ${latest.total_contacted.toLocaleString()} contacted</small></div>
+            </div>
+        `;
+
         const html = `
             <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value">${stats.total_nodes.toLocaleString()}</div>
-                    <div class="stat-label">Listening Nodes</div>
-                </div>
+                ${listeningNodesHtml}
                 ${percentageStats.map(stat => `
                 <div class="stat-card">
                     <div class="stat-value">${stat.value}%</div>

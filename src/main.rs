@@ -144,9 +144,12 @@ async fn run_census(
                 // Only care about listening nodes for stats, break when channel closed.
                 match msg {
                     Some(CrawlerMessage::Listening(peer)) => {
+                        stats.increment_contacted();
                         stats.add_node(peer);
                     }
-                    Some(CrawlerMessage::NonListening(_)) => {}
+                    Some(CrawlerMessage::NonListening(_)) => {
+                        stats.increment_contacted();
+                    }
                     None => break,
                 }
             }
@@ -161,8 +164,9 @@ async fn run_census(
 
     let duration = process_start.elapsed();
     info!(
-        "Census complete: {} nodes discovered in {:.1} seconds",
+        "Census complete: {} listening nodes out of {} contacted in {:.1} seconds",
         stats.total_nodes(),
+        stats.total_contacted(),
         duration.as_secs_f64()
     );
 

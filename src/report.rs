@@ -19,6 +19,9 @@ pub struct CensusReport {
     pub timestamp: u64,
     /// Duration of the census in seconds.
     pub duration_seconds: u64,
+    /// Total number of nodes contacted (listening + non-listening).
+    #[serde(default)]
+    pub total_contacted: usize,
     /// Feature statistics.
     pub stats: FeatureStats,
     /// Version of the census tool.
@@ -35,6 +38,7 @@ impl CensusReport {
         Self {
             timestamp,
             duration_seconds: node_stats.duration(),
+            total_contacted: node_stats.total_contacted(),
             stats: node_stats.features.clone(),
             census_version: env!("CARGO_PKG_VERSION").to_string(),
         }
@@ -68,6 +72,7 @@ impl CensusReport {
             "timestamp",
             "duration_seconds",
             "total_nodes",
+            "total_contacted",
             "v2_transport",
             "v2_transport_pct",
             "compact_filters",
@@ -82,6 +87,7 @@ impl CensusReport {
             self.timestamp.to_string(),
             self.duration_seconds.to_string(),
             stats.total_nodes.to_string(),
+            self.total_contacted.to_string(),
             stats.v2_transport.to_string(),
             format!("{:.2}", stats.percentage(stats.v2_transport)),
             stats.compact_filters.to_string(),
@@ -98,15 +104,16 @@ impl fmt::Display for CensusReport {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let stats = &self.stats;
         write!(
-            f,
-            "nodes: {} | v2: {} ({:.1}%) | filters: {} ({:.1}%) | v2 & filters: {} ({:.1}%)",
-            stats.total_nodes,
-            stats.v2_transport,
-            stats.percentage(stats.v2_transport),
-            stats.compact_filters,
-            stats.percentage(stats.compact_filters),
-            stats.v2_and_filters,
-            stats.percentage(stats.v2_and_filters)
-        )
+                f,
+                "nodes: {} out of {} contacted | v2: {} ({:.1}%) | filters: {} ({:.1}%) | v2 & filters: {} ({:.1}%)",
+                stats.total_nodes,
+                self.total_contacted,
+                stats.v2_transport,
+                stats.percentage(stats.v2_transport),
+                stats.compact_filters,
+                stats.percentage(stats.compact_filters),
+                stats.v2_and_filters,
+                stats.percentage(stats.v2_and_filters)
+            )
     }
 }
