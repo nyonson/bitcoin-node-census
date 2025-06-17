@@ -10,19 +10,19 @@ STABLE_TOOLCHAIN := "1.87.0"
     just --list
 
 # Light check including format and lint rules. 
-@check toolchain=NIGHTLY_TOOLCHAIN:
+@check:
   # Default to the nightly toolchain for modern format and lint rules.
 
   # Ensure the toolchain is installed and has the necessary components.
-  rustup component add --toolchain {{toolchain}} rustfmt clippy
+  rustup component add --toolchain {{NIGHTLY_TOOLCHAIN }} rustfmt clippy
   # Cargo's wrapper for rustfmt predates workspaces, so uses the "--all" flag instead of "--workspaces".
-  cargo +{{toolchain}} fmt --check --all
+  cargo +{{NIGHTLY_TOOLCHAIN }} fmt --check --all
   # Lint all workspace members. Enable all feature flags. Check all targets (tests, examples) along with library code. Turn warnings into errors.
-  cargo +{{toolchain}} clippy --all-features --all-targets -- -D warnings
+  cargo +{{NIGHTLY_TOOLCHAIN }} clippy --all-features --all-targets -- -D warnings
   # Checking the extremes: all features enabled as well as none. If features are additive, this should expose conflicts.
   # If non-additive features (mutually exclusive) are defined, more specific commands are required.
-  cargo +{{toolchain}} check --no-default-features --all-targets
-  cargo +{{toolchain}} check --all-features --all-targets
+  cargo +{{NIGHTLY_TOOLCHAIN }} check --no-default-features --all-targets
+  cargo +{{NIGHTLY_TOOLCHAIN }} check --all-features --all-targets
 
 # Attempt any auto-fixes for format and lints.
 @fix:
