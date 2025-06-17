@@ -43,7 +43,7 @@
         #content {
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 4rem;
         }
         
         .stats-grid {
@@ -74,10 +74,16 @@
             text-transform: uppercase;
         }
 
-        .chart-contents {
+        .trends {
             display: flex;
             flex-direction: column;
             gap: 2rem;
+        }
+
+        .chart-contents {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
             
             padding: 1rem;
             border: 0.125rem solid #1c2023;
@@ -210,16 +216,19 @@
                 </div>
                 `).join('')}
             </div>
-            <div class="chart-contents">
-                <h2>Nodes</h2>
-                <div class="chart-container">
-                    <canvas id="listening-chart"></canvas>
+            <div class="trends">
+                <h2>Trends</h2>
+                <div class="chart-contents">
+                    <h3>Nodes</h3>
+                    <div class="chart-container">
+                        <canvas id="listening-chart"></canvas>
+                    </div>
                 </div>
-            </div>
-            <div class="chart-contents">
-                <h2>Features</h2>
-                <div class="chart-container">
-                    <canvas id="chart"></canvas>
+                <div class="chart-contents">
+                    <h3>Features</h3>
+                    <div class="chart-container">
+                        <canvas id="chart"></canvas>
+                    </div>
                 </div>
             </div>
             <div class="footer">
