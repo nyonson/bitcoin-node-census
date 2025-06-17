@@ -73,13 +73,20 @@
             color: #747c84;
             text-transform: uppercase;
         }
+
+        .chart-contents {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            
+            padding: 1rem;
+            border: 0.125rem solid #1c2023;
+            box-shadow: 0.25rem 0.25rem #1c2023;
+        }
         
         .chart-container {
             position: relative;
             height: 400px;
-            padding: 1rem;
-            border: 0.125rem solid #1c2023;
-            box-shadow: 0.25rem 0.25rem #1c2023;
         }
         
         .error {
@@ -203,8 +210,17 @@
                 </div>
                 `).join('')}
             </div>
-            <div class="chart-container">
-                <canvas id="chart"></canvas>
+            <div class="chart-contents">
+                <h2>Nodes</h2>
+                <div class="chart-container">
+                    <canvas id="listening-chart"></canvas>
+                </div>
+            </div>
+            <div class="chart-contents">
+                <h2>Features</h2>
+                <div class="chart-container">
+                    <canvas id="chart"></canvas>
+                </div>
             </div>
             <div class="footer">
                 <time>Last updated: ${formattedDate}</time>
@@ -214,7 +230,7 @@
         
         document.getElementById('content').innerHTML = html;
         
-        // Create chart
+        // Create percentage chart
         const ctx = document.getElementById('chart').getContext('2d');
         
         // Define datasets with their latest values for sorting
@@ -314,6 +330,108 @@
                         ticks: {
                             callback: function(value) {
                                 return value + '%';
+                            },
+                            font: {
+                                family: 'Inter',
+                                size: 11
+                            },
+                            color: '#747c84'
+                        },
+                        grid: {
+                            color: '#e5e7eb',
+                            borderColor: '#1c2023',
+                            borderWidth: 2
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                family: 'Inter',
+                                size: 11
+                            },
+                            color: '#747c84'
+                        },
+                        grid: {
+                            display: false,
+                            borderColor: '#1c2023',
+                            borderWidth: 2
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Create listening nodes trend chart
+        const listeningCtx = document.getElementById('listening-chart').getContext('2d');
+        
+        new Chart(listeningCtx, {
+            type: 'line',
+            data: {
+                labels: data.map(r => {
+                    const date = new Date(r.timestamp * 1000);
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                }),
+                datasets: [{
+                    label: 'Listening Nodes',
+                    data: data.map(r => r.stats.total_nodes),
+                    borderColor: '#c79595',
+                    backgroundColor: 'rgba(199, 149, 149, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#c79595',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                family: 'Inter',
+                                size: 12
+                            },
+                            color: '#1c2023',
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: '#1c2023',
+                        titleColor: '#f3f4f5',
+                        bodyColor: '#c7ccd1',
+                        borderColor: '#c79595',
+                        borderWidth: 1,
+                        titleFont: {
+                            family: 'Inter',
+                            size: 12,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            family: 'Inter',
+                            size: 11
+                        },
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString();
                             },
                             font: {
                                 family: 'Inter',
