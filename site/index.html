@@ -109,23 +109,20 @@
             color: #747c84;
             display: block;
             text-align: center;
-            margin-top: 1rem;
         }
         
         .footer {
             font-size: x-small;
             color: #747c84;
             text-align: center;
-            margin-top: 0.5rem;
+
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
         
         .footer a {
-            color: #c79595;
-            text-decoration: none;
-        }
-        
-        .footer a:hover {
-            text-decoration: underline;
+            color: #747c84;
         }
     </style>
 </head>
@@ -209,8 +206,8 @@
             <div class="chart-container">
                 <canvas id="chart"></canvas>
             </div>
-            <time>Last updated: ${formattedDate}</time>
             <div class="footer">
+                <time>Last updated: ${formattedDate}</time>
                 <a href="https://github.com/nyonson/bitcoin-node-census" target="_blank" rel="noopener noreferrer">source</a>
             </div>
         `;
