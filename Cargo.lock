@@ -190,9 +190,9 @@ dependencies = [
 
 [[package]]
 name = "bitcoin-peers-crawler"
-version = "0.1.4"
+version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43a4f732db52fcdcd264a4974f11d8fc797dae4a5795700bce306ed0ab781a1b"
+checksum = "e2190bcd43cbdf57d060e26f096c617e8ebee95f0b1331e5165f5fe7d4750bf7"
 dependencies = [
  "bitcoin",
  "bitcoin-peers-connection",
