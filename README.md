@@ -47,7 +47,7 @@ And configure it:
     
     # Seed node configuration
     seedNode = {
-      address = "seed.bitcoin.sipa.be";
+      address = "192.168.1.238";
       port = 8333;
     };
     

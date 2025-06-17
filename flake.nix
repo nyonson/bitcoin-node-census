@@ -90,8 +90,8 @@
             seedNode = {
               address = mkOption {
                 type = types.str;
-                description = "Bitcoin seed node address (IP or hostname)";
-                example = "seed.bitcoin.sipa.be";
+                description = "Bitcoin seed node address";
+                example = "192.168.1.238";
               };
               
               port = mkOption {
