@@ -216,6 +216,53 @@
         
         // Create chart
         const ctx = document.getElementById('chart').getContext('2d');
+        
+        // Define datasets with their latest values for sorting
+        const datasets = [{
+            label: 'Compact Filters',
+            data: data.map(r => (r.stats.compact_filters / r.stats.total_nodes * 100)),
+            borderColor: '#c79595',
+            backgroundColor: 'rgba(199, 149, 149, 0.1)',
+            borderWidth: 3,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#c79595',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            latestValue: (latest.stats.compact_filters / latest.stats.total_nodes * 100)
+        }, {
+            label: 'V2 Transport',
+            data: data.map(r => (r.stats.v2_transport / r.stats.total_nodes * 100)),
+            borderColor: '#1c2023',
+            backgroundColor: 'rgba(28, 32, 35, 0.1)',
+            borderWidth: 3,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#1c2023',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            latestValue: (latest.stats.v2_transport / latest.stats.total_nodes * 100)
+        }, {
+            label: 'Compact Filters & V2 Transport',
+            data: data.map(r => (r.stats.v2_and_filters / r.stats.total_nodes * 100)),
+            borderColor: '#747c84',
+            backgroundColor: 'rgba(116, 124, 132, 0.1)',
+            borderWidth: 2,
+            tension: 0.4,
+            pointRadius: 3,
+            pointBackgroundColor: '#747c84',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            borderDash: [5, 5],
+            latestValue: (latest.stats.v2_and_filters / latest.stats.total_nodes * 100)
+        }];
+        
+        // Sort datasets by latest value (descending)
+        datasets.sort((a, b) => b.latestValue - a.latestValue);
+        
+        // Remove the temporary latestValue property
+        datasets.forEach(dataset => delete dataset.latestValue);
+        
         new Chart(ctx, {
             type: 'line',
             data: {
@@ -223,41 +270,7 @@
                     const date = new Date(r.timestamp * 1000);
                     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                 }),
-                datasets: [{
-                    label: 'Compact Filters',
-                    data: data.map(r => (r.stats.compact_filters / r.stats.total_nodes * 100)),
-                    borderColor: '#c79595',
-                    backgroundColor: 'rgba(199, 149, 149, 0.1)',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#c79595',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2
-                }, {
-                    label: 'V2 Transport',
-                    data: data.map(r => (r.stats.v2_transport / r.stats.total_nodes * 100)),
-                    borderColor: '#1c2023',
-                    backgroundColor: 'rgba(28, 32, 35, 0.1)',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#1c2023',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2
-                }, {
-                    label: 'Compact Filters & V2 Transport',
-                    data: data.map(r => (r.stats.v2_and_filters / r.stats.total_nodes * 100)),
-                    borderColor: '#747c84',
-                    backgroundColor: 'rgba(116, 124, 132, 0.1)',
-                    borderWidth: 2,
-                    tension: 0.4,
-                    pointRadius: 3,
-                    pointBackgroundColor: '#747c84',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    borderDash: [5, 5]
-                }]
+                datasets: datasets
             },
             options: {
                 responsive: true,
