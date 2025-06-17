@@ -83,4 +83,11 @@ STABLE_TOOLCHAIN := "1.87.0"
   gcloud storage rsync --recursive --delete-unmatched-destination-objects site/ {{bucket}}/
   # Set content type for .jsonl file (non-standard extension).
   gcloud storage objects update {{bucket}}/census.jsonl --content-type="application/x-ndjson" 2>/dev/null || true
+  # Set cache policies based on file type to bust cache appropriately
+  @echo "Setting cache-control headers..."
+  # Short cache for data and HTML files (5 minutes - updates only happen a few times per week)
+  gcloud storage objects update {{bucket}}/census.jsonl --cache-control="max-age=300" 2>/dev/null || true
+  gcloud storage objects update {{bucket}}/index.html --cache-control="max-age=300" 2>/dev/null || true
+  # Longer cache for static assets like favicon (1 day - rarely changes)
+  gcloud storage objects update {{bucket}}/favicon.svg --cache-control="max-age=86400" 2>/dev/null || true
   @echo "Complete!"

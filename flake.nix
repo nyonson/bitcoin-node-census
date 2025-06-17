@@ -240,6 +240,23 @@
                     --content-type="application/x-ndjson" \
                     2>/dev/null || true
                   
+                  # Set cache policies based on file type to bust cache appropriately
+                  echo "Setting cache-control headers..."
+                  # Short cache for data and HTML files (5 minutes - updates only happen a few times per week)
+                  ${pkgs.google-cloud-sdk}/bin/gcloud storage objects update \
+                    ${cfg.gcp.bucket}/census.jsonl \
+                    --cache-control="max-age=300" \
+                    2>/dev/null || true
+                  ${pkgs.google-cloud-sdk}/bin/gcloud storage objects update \
+                    ${cfg.gcp.bucket}/index.html \
+                    --cache-control="max-age=300" \
+                    2>/dev/null || true
+                  # Longer cache for static assets like favicon (1 day - rarely changes)
+                  ${pkgs.google-cloud-sdk}/bin/gcloud storage objects update \
+                    ${cfg.gcp.bucket}/favicon.svg \
+                    --cache-control="max-age=86400" \
+                    2>/dev/null || true
+                  
                   echo "Publishing complete!"
                 ''}
               '';
