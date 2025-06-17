@@ -113,14 +113,7 @@
               description = "Systemd calendar expression for how often to run census";
               example = "hourly";
             };
-            
-            favicon = mkOption {
-              type = types.nullOr types.path;
-              default = null;
-              description = "Path to custom favicon.svg file. If null, uses the default Bitcoin favicon from the package";
-              example = "/path/to/custom-favicon.svg";
-            };
-            
+           
             gcp = {
               bucket = mkOption {
                 type = types.nullOr types.str;
@@ -209,26 +202,17 @@
                 # Ensure site directory exists.
                 mkdir -p site
                 
-                # Copy static files from package if they don't exist.
-                if [ ! -f site/index.html ]; then
-                  if [ -f ${cfg.package}/share/site/index.html ]; then
-                    cp ${cfg.package}/share/site/index.html site/
-                  else
-                    echo "Warning: No index.html found in package"
-                  fi
+                # Always copy static files from package to ensure they're up to date.
+                if [ -f ${cfg.package}/share/site/index.html ]; then
+                  cp -f ${cfg.package}/share/site/index.html site/
+                else
+                  echo "Warning: No index.html found in package"
                 fi
                 
-                # Copy favicon - either custom or default from package.
-                if [ ! -f site/favicon.svg ]; then
-                  ${if cfg.favicon != null then ''
-                    cp ${cfg.favicon} site/favicon.svg
-                  '' else ''
-                    if [ -f ${cfg.package}/share/site/favicon.svg ]; then
-                      cp ${cfg.package}/share/site/favicon.svg site/
-                    else
-                      echo "Warning: No favicon.svg found in package"
-                    fi
-                  ''}
+                if [ -f ${cfg.package}/share/site/favicon.svg ]; then
+                  cp -f ${cfg.package}/share/site/favicon.svg site/
+                else
+                  echo "Warning: No favicon.svg found in package"
                 fi
               '';
               
