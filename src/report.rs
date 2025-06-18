@@ -51,7 +51,7 @@ impl CensusReport {
     ) -> Result<(), Box<dyn std::error::Error>> {
         let content = match format {
             OutputFormat::Json => serde_json::to_string_pretty(self)?,
-            OutputFormat::Jsonl => serde_json::to_string(self)?,
+            OutputFormat::Jsonl => format!("{}\n", serde_json::to_string(self)?),
             OutputFormat::Csv => self.format_csv()?,
         };
 

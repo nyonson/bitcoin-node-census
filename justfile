@@ -44,7 +44,7 @@ STABLE_TOOLCHAIN := "1.87.0"
 # Run census.
 @run address port="8333":
   # Simply appending data to the file since each run is a "full" (not incremental) view of the world. A data point.
-  cargo +{{STABLE_TOOLCHAIN}} run --release -- run --address {{address}} --port {{port}} --format json >> site/census.jsonl
+  cargo +{{STABLE_TOOLCHAIN}} run --release -- run --address {{address}} --port {{port}} --format jsonl >> site/census.jsonl
   echo "Census result appended to site/census.jsonl"
 
 # Publish a new version.
