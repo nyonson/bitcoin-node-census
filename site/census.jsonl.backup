@@ -1,3 +1,0 @@
-{"timestamp": 1749923493, "duration_seconds": 92450, "stats": {"total_nodes": 11286, "v2_transport": 7007, "compact_filters": 1142, "v2_and_filters": 1023}, "census_version": "0.1.1"}
-{"timestamp":1750154015,"duration_seconds":92099,"total_contacted":365896,"stats":{"total_nodes":11249,"v2_transport":7101,"compact_filters":1178,"v2_and_filters":1061},"census_version":"0.1.2"}
-{"timestamp":1750228886,"duration_seconds":45640,"total_contacted":362684,"stats":{"total_nodes":11458,"v2_transport":7269,"compact_filters":1221,"v2_and_filters":1101},"census_version":"0.1.2"}
