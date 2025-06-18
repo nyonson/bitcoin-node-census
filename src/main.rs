@@ -14,8 +14,8 @@ use tokio::{
 mod report;
 mod stats;
 
-use report::{CensusReport, OutputFormat};
-use stats::NodeStats;
+pub use report::{CensusReport, OutputFormat};
+pub use stats::NodeStats;
 
 const USER_AGENT: &str = concat!("/census:", env!("CARGO_PKG_VERSION"), "/");
 
