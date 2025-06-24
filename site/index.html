@@ -127,15 +127,28 @@
         .footer {
             font-size: x-small;
             color: #747c84;
-            text-align: center;
 
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            align-items: center;
         }
         
         .footer a {
             color: #747c84;
+        }
+      
+        .license {
+            display: flex;
+            gap: 0.25rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .license-logo {
+            height: 1rem;
+            width: 1rem;
+            vertical-align: text-bottom;
         }
     </style>
 </head>
@@ -237,6 +250,14 @@
                     <a href="https://github.com/nyonson/bitcoin-node-census" target="_blank" rel="noopener noreferrer">source</a>
                     <span class="separator"> // </span>
                     <a href="census.jsonl" download="census.jsonl">data</a>
+                </div>
+                <div class="license">
+                    <p xmlns:cc="http://creativecommons.org/ns#" >
+                          This work is marked with 
+                          <a href="https://creativecommons.org/publicdomain/zero/1.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer">CC0 1.0</a>
+                    </p>
+                    <img class="license-logo" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt="">
+                    <img class="license-logo" src="https://mirrors.creativecommons.org/presskit/icons/zero.svg?ref=chooser-v1" alt="">
                 </div>
             </div>
         `;
