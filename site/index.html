@@ -40,6 +40,11 @@
             font-size: clamp(3rem, 8vw, 6rem);
         }
 
+        h2, h3 {
+            text-transform: uppercase;
+            text-decoration-line: underline;
+        }
+
         #content {
             display: flex;
             flex-direction: column;
@@ -118,24 +123,31 @@
         }
         
         time {
-            font-size: x-small;
+            font-size: small;
             color: #747c84;
             display: block;
             text-align: center;
         }
         
         .footer {
-            font-size: x-small;
+            text-transform: uppercase;
+            font-size: small;
             color: #747c84;
 
             display: flex;
-            flex-direction: column;
             gap: 0.5rem;
-            align-items: center;
+            align-items: end;
+            justify-content: space-between;
+        }
+
+        .footer-data {
+            display: flex;
+            flex-direction: column;
         }
         
         .footer a {
             color: #747c84;
+            text-decoration: none;
         }
       
         .license {
@@ -245,16 +257,14 @@
                 </div>
             </div>
             <div class="footer">
-                <time>Last updated: ${formattedDate}</time>
-                <div>
-                    <a href="https://github.com/nyonson/bitcoin-node-census" target="_blank" rel="noopener noreferrer">source</a>
-                    <span class="separator"> // </span>
+                <div class="footer-data">
                     <a href="census.jsonl" download="census.jsonl">data</a>
+                    <a href="https://github.com/nyonson/bitcoin-node-census" target="_blank" rel="noopener noreferrer">source</a>
+                    <time>Last updated ${formattedDate}</time>
                 </div>
                 <div class="license">
                     <p xmlns:cc="http://creativecommons.org/ns#" >
-                          This work is marked with 
-                          <a href="https://creativecommons.org/publicdomain/zero/1.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer">CC0 1.0</a>
+                          <a href="https://creativecommons.org/publicdomain/zero/1.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer">Public Domain</a>
                     </p>
                     <img class="license-logo" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt="">
                     <img class="license-logo" src="https://mirrors.creativecommons.org/presskit/icons/zero.svg?ref=chooser-v1" alt="">
