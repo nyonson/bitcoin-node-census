@@ -50,6 +50,11 @@
             flex-direction: column;
             gap: 4rem;
         }
+
+        .census-meta {
+            display: flex;
+            text-transform: uppercase;
+        }
         
         .stats-grid {
             display: grid;
@@ -232,6 +237,9 @@
         `;
 
         const html = `
+            <div class="census-meta">
+                <time>Last run ${formattedDate}</time>
+            </div>
             <div class="stats-grid">
                 ${listeningNodesHtml}
                 ${percentageStats.map(stat => `
@@ -260,7 +268,6 @@
                 <div class="footer-data">
                     <a href="census.jsonl" download="census.jsonl">data</a>
                     <a href="https://github.com/nyonson/bitcoin-node-census" target="_blank" rel="noopener noreferrer">source</a>
-                    <time>Last updated ${formattedDate}</time>
                 </div>
                 <div class="license">
                     <p xmlns:cc="http://creativecommons.org/ns#" >
