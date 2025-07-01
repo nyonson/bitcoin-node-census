@@ -81,8 +81,8 @@ STABLE_TOOLCHAIN := "1.87.0"
 @deploy bucket:
   @echo "Deploying to {{bucket}}..."
   gcloud storage rsync --recursive --delete-unmatched-destination-objects site/ {{bucket}}/
-  # Set content type for .jsonl file (non-standard extension).
-  gcloud storage objects update {{bucket}}/census.jsonl --content-type="application/x-ndjson" 2>/dev/null || true
+  # Set content type for .jsonl file to prevent Safari from renaming it.
+  gcloud storage objects update {{bucket}}/census.jsonl --content-type="application/jsonl" 2>/dev/null || true
   # Set cache policies based on file type to bust cache appropriately
   @echo "Setting cache-control headers..."
   # Short cache for data and HTML files (5 minutes - updates only happen a few times per week)
