@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.3
+
+* Upgrade underlying `connection` dependency.
+
 ## v0.1.2
 
 * Expose total contacted nodes in report.

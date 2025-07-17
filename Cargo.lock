@@ -106,9 +106,9 @@ checksum = "d965446196e3b7decd44aa7ee49e31d630118f90ef12f97900f262eb915c951d"
 
 [[package]]
 name = "bip324"
-version = "0.7.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "53157fcb2d6ec2851c7602d0690536d0b79209e393972cb2b36bd5d72dbd1879"
+checksum = "99bc4adb487be564a58885d17ec97dae3578acf488e15b14cce8fe3f93a42142"
 dependencies = [
  "bitcoin",
  "bitcoin_hashes 0.15.0",
@@ -178,9 +178,9 @@ dependencies = [
 
 [[package]]
 name = "bitcoin-peers-connection"
-version = "0.1.1"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "593d094bd647d382fabacc08e7855bf47bdec7c09adff1d2e7faa462738e3554"
+checksum = "52afbbd6ccb681e6d1ea9da4f56e77560d141346866035dfab582bb61e9541a5"
 dependencies = [
  "bip324",
  "bitcoin",
@@ -190,9 +190,9 @@ dependencies = [
 
 [[package]]
 name = "bitcoin-peers-crawler"
-version = "0.1.5"
+version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2190bcd43cbdf57d060e26f096c617e8ebee95f0b1331e5165f5fe7d4750bf7"
+checksum = "bef9cf2e4760457cc904565371dc3f4383b3078f0a8d9192ff0027af61f2fddf"
 dependencies = [
  "bitcoin",
  "bitcoin-peers-connection",
