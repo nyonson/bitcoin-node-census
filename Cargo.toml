@@ -1,6 +1,6 @@
 [package]
 name = "bitcoin-node-census"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 authors = ["Nick Johnson <nick@yonson.dev>"]
 description = "Track bitcoin node feature adoption"

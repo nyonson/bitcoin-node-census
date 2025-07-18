@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.4
+
+* Small tweaks for the site including center alignment.
+
 ## v0.1.3
 
 * Upgrade underlying `connection` dependency.
