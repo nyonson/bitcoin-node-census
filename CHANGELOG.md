@@ -2,6 +2,10 @@
 
 ## v0.1.4
 
+* Site revamp.
+
+## v0.1.4
+
 * Small tweaks for the site including center alignment.
 
 ## v0.1.3
