@@ -5,517 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CENSUS</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS Assets -->
+    <link rel="stylesheet" href="https://assets.yonson.dev/v1/css/main.css">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        ::selection {
-            color: #c79595;
-            background-color: transparent;
-        }
-        
-        body { 
-            font-family: 'Inter', sans-serif;
-            background: #fff;
-            color: #1c2023;
-            padding: 2rem;
+        html {
             display: flex;
             justify-content: center;
+            padding: var(--spacing-md);
         }
-        
-        .container {
-            max-width: 80rem;
+
+        body {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-        }
-        
-        h1 { 
-            text-transform: uppercase;
-            text-decoration-line: underline;
-            text-decoration-color: #c79595;
-            font-size: clamp(3rem, 8vw, 6rem);
+            width: 100%;
+            max-width: 1200px;
+            gap: var(--spacing-xl);
         }
 
-        h2, h3 {
-            text-transform: uppercase;
-            text-decoration-line: underline;
-        }
-
-        #content {
+        main {
+            width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 4rem;
+            gap: var(--spacing-xl);
         }
 
-        .census-meta {
-            display: flex;
-            text-transform: uppercase;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        
-        .stat-card {
-            border: 0.125rem solid #1c2023;
-            padding: 1rem;
-            box-shadow: 0.25rem 0.25rem #1c2023;
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-        
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1c2023;
-            line-height: 1;
-        }
-        
-        .stat-label {
-            font-size: small;
-            color: #747c84;
+        small {
             text-transform: uppercase;
         }
 
-        .trends {
+        footer {
             display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        .chart-contents {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            
-            padding: 1rem;
-            border: 0.125rem solid #1c2023;
-            box-shadow: 0.25rem 0.25rem #1c2023;
-        }
-        
-        .chart-container {
-            position: relative;
-            height: 400px;
-        }
-        
-        .error {
-            color: #c79595;
-            padding: 1rem;
-            text-align: center;
-            border: 0.125rem solid #c79595;
-            box-shadow: 0.5rem 0.5rem #FFFFFF, 0.5rem 0.5rem 0 0.125rem #C79595;
-            margin-right: 0.625rem;
-            font-family: monospace;
-        }
-        
-        .loading {
-            text-align: center;
-            color: #747c84;
-            padding: 4rem;
-            font-size: small;
-            text-transform: uppercase;
-        }
-        
-        time {
-            font-size: small;
-            color: #747c84;
-            display: block;
-            text-align: center;
-        }
-        
-        .footer {
-            text-transform: uppercase;
-            font-size: small;
-            color: #747c84;
-
-            display: flex;
-            gap: 0.5rem;
+            gap: var(--spacing-sm);
             align-items: end;
             justify-content: space-between;
         }
-
-        .footer-data {
+      
+        .trends {
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
-        }
-        
-        .footer a {
-            color: #747c84;
-            text-decoration: none;
-        }
-      
-        .license {
-            display: flex;
-            gap: 0.25rem;
-            justify-content: center;
-            align-items: center;
+            gap: var(--spacing-lg);
         }
 
-        .license-logo {
-            height: 1rem;
-            width: 1rem;
-            vertical-align: text-bottom;
+        .card-grid {
+            gap: var(--spacing-md);
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .chart {
+            position: relative;
+            aspect-ratio: 16/9;
+        }
+        
+        #footer-data {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        #stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        #trends-grid {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Bitcoin Node Census</h1>
-        
-        <div id="content">
-            <div class="loading">Loading census data...</div>
+    <main>
+        <div>
+            <h1>Bitcoin Node Census</h1>
+            <small id="last-run">Loading...</small>
         </div>
-    </div>
-    
-    <script>
-    async function loadCensusData() {
-        try {
-            const response = await fetch('census.jsonl');
-            if (!response.ok) {
-                throw new Error('Could not load census.jsonl');
-            }
-            
-            const text = await response.text();
-            const lines = text.trim().split('\n').filter(line => line);
-            const data = lines.map(line => JSON.parse(line));
-            
-            if (data.length === 0) {
-                throw new Error('No data found in census.jsonl');
-            }
-            
-            displayData(data);
-        } catch (error) {
-            document.getElementById('content').innerHTML = 
-                `<div class="error">Error: ${error.message}</div>`;
-        }
-    }
-    
-    function displayData(data) {
-        // Sort by timestamp
-        data.sort((a, b) => a.timestamp - b.timestamp);
         
-        // Get latest data for stats
-        const latest = data[data.length - 1];
-        const stats = latest.stats;
-        
-        // Calculate percentages
-        const filterPct = (stats.compact_filters / stats.total_nodes * 100).toFixed(1);
-        const v2Pct = (stats.v2_transport / stats.total_nodes * 100).toFixed(1);
-        const bothPct = (stats.v2_and_filters / stats.total_nodes * 100).toFixed(1);
-        
-        // Create array of percentage stats and sort by value (highest first)
-        const percentageStats = [
-            { value: filterPct, label: 'Compact Filters' },
-            { value: v2Pct, label: 'V2 Transport' },
-            { value: bothPct, label: 'Compact Filters & V2 Transport' }
-        ].sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
-        
-        // Format date
-        const date = new Date(latest.timestamp * 1000);
-        const formattedDate = date.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric'
-        });
-        
-        listeningNodesHtml = `
-            <div class="stat-card">
-                <div class="stat-value">${stats.total_nodes.toLocaleString()}</div>
-                <div class="stat-label">Listening Nodes<br><small style="color: #a0a8b0; font-weight: normal;">out of ${latest.total_contacted.toLocaleString()} contacted</small></div>
+        <div id="stats-grid" class="card-grid">
+            <div class="card">
+                <h2 id="total-nodes">--</h2>
+                <small>Listening Nodes out of <span id="total-contacted">--</span> contacted</small>
             </div>
-        `;
-
-        const html = `
-            <div class="census-meta">
-                <time>Last run ${formattedDate}</time>
+            <div class="card">
+                <h2 id="stat-1-value">--%</h2>
+                <small id="stat-1-label">Feature 1</small>
             </div>
-            <div class="stats-grid">
-                ${listeningNodesHtml}
-                ${percentageStats.map(stat => `
-                <div class="stat-card">
-                    <div class="stat-value">${stat.value}%</div>
-                    <div class="stat-label">${stat.label}</div>
-                </div>
-                `).join('')}
+            <div class="card">
+                <h2 id="stat-2-value">--%</h2>
+                <small id="stat-2-label">Feature 2</small>
             </div>
-            <div class="trends">
-                <h2>Trends</h2>
-                <div class="chart-contents">
+            <div class="card">
+                <h2 id="stat-3-value">--%</h2>
+                <small id="stat-3-label">Feature 3</small>
+            </div>
+        </div>
+        
+        <div class="trends">
+            <h2>Trends</h2>
+            <div id="trends-grid" class="card-grid">
+                <div class="card">
                     <h3>Nodes</h3>
-                    <div class="chart-container">
-                        <canvas id="listening-chart"></canvas>
-                    </div>
+                    <div id="nodes-chart" class="chart"></div>
                 </div>
-                <div class="chart-contents">
+                <div class="card">
                     <h3>Features</h3>
-                    <div class="chart-container">
-                        <canvas id="chart"></canvas>
-                    </div>
+                    <div id="features-chart" class="chart"></div>
                 </div>
             </div>
-            <div class="footer">
-                <div class="footer-data">
-                    <a href="census.jsonl" download="census.jsonl">data</a>
-                    <a href="https://github.com/nyonson/bitcoin-node-census" target="_blank" rel="noopener noreferrer">source</a>
-                </div>
-                <div class="license">
-                    <p xmlns:cc="http://creativecommons.org/ns#" >
-                          <a href="https://creativecommons.org/publicdomain/zero/1.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer">Public Domain</a>
-                    </p>
-                    <img class="license-logo" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt="">
-                    <img class="license-logo" src="https://mirrors.creativecommons.org/presskit/icons/zero.svg?ref=chooser-v1" alt="">
-                </div>
-            </div>
-        `;
+        </div>
         
-        document.getElementById('content').innerHTML = html;
-        
-        // Create percentage chart
-        const ctx = document.getElementById('chart').getContext('2d');
-        
-        // Define datasets with their latest values for sorting
-        const datasets = [{
-            label: 'Compact Filters',
-            data: data.map(r => (r.stats.compact_filters / r.stats.total_nodes * 100)),
-            borderColor: '#c79595',
-            backgroundColor: 'rgba(199, 149, 149, 0.1)',
-            borderWidth: 3,
-            tension: 0.4,
-            pointRadius: 4,
-            pointBackgroundColor: '#c79595',
-            pointBorderColor: '#fff',
-            pointBorderWidth: 2,
-            latestValue: (latest.stats.compact_filters / latest.stats.total_nodes * 100)
-        }, {
-            label: 'V2 Transport',
-            data: data.map(r => (r.stats.v2_transport / r.stats.total_nodes * 100)),
-            borderColor: '#1c2023',
-            backgroundColor: 'rgba(28, 32, 35, 0.1)',
-            borderWidth: 3,
-            tension: 0.4,
-            pointRadius: 4,
-            pointBackgroundColor: '#1c2023',
-            pointBorderColor: '#fff',
-            pointBorderWidth: 2,
-            latestValue: (latest.stats.v2_transport / latest.stats.total_nodes * 100)
-        }, {
-            label: 'Compact Filters & V2 Transport',
-            data: data.map(r => (r.stats.v2_and_filters / r.stats.total_nodes * 100)),
-            borderColor: '#747c84',
-            backgroundColor: 'rgba(116, 124, 132, 0.1)',
-            borderWidth: 2,
-            tension: 0.4,
-            pointRadius: 3,
-            pointBackgroundColor: '#747c84',
-            pointBorderColor: '#fff',
-            pointBorderWidth: 2,
-            borderDash: [5, 5],
-            latestValue: (latest.stats.v2_and_filters / latest.stats.total_nodes * 100)
-        }];
-        
-        // Sort datasets by latest value (descending)
-        datasets.sort((a, b) => b.latestValue - a.latestValue);
-        
-        // Remove the temporary latestValue property
-        datasets.forEach(dataset => delete dataset.latestValue);
-        
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: data.map(r => {
-                    const date = new Date(r.timestamp * 1000);
-                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                }),
-                datasets: datasets
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            font: {
-                                family: 'Inter',
-                                size: 12
-                            },
-                            color: '#1c2023',
-                            padding: 20,
-                            usePointStyle: true
-                        }
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        backgroundColor: '#1c2023',
-                        titleColor: '#f3f4f5',
-                        bodyColor: '#c7ccd1',
-                        borderColor: '#c79595',
-                        borderWidth: 1,
-                        titleFont: {
-                            family: 'Inter',
-                            size: 12,
-                            weight: 'bold'
-                        },
-                        bodyFont: {
-                            family: 'Inter',
-                            size: 11
-                        },
-                        padding: 12
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return value + '%';
-                            },
-                            font: {
-                                family: 'Inter',
-                                size: 11
-                            },
-                            color: '#747c84'
-                        },
-                        grid: {
-                            color: '#e5e7eb',
-                            borderColor: '#1c2023',
-                            borderWidth: 2
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            font: {
-                                family: 'Inter',
-                                size: 11
-                            },
-                            color: '#747c84'
-                        },
-                        grid: {
-                            display: false,
-                            borderColor: '#1c2023',
-                            borderWidth: 2
-                        }
-                    }
-                }
-            }
-        });
-        
-        // Create listening nodes trend chart
-        const listeningCtx = document.getElementById('listening-chart').getContext('2d');
-        
-        new Chart(listeningCtx, {
-            type: 'line',
-            data: {
-                labels: data.map(r => {
-                    const date = new Date(r.timestamp * 1000);
-                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                }),
-                datasets: [{
-                    label: 'Listening Nodes',
-                    data: data.map(r => r.stats.total_nodes),
-                    borderColor: '#c79595',
-                    backgroundColor: 'rgba(199, 149, 149, 0.1)',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#c79595',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            font: {
-                                family: 'Inter',
-                                size: 12
-                            },
-                            color: '#1c2023',
-                            padding: 20,
-                            usePointStyle: true
-                        }
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        backgroundColor: '#1c2023',
-                        titleColor: '#f3f4f5',
-                        bodyColor: '#c7ccd1',
-                        borderColor: '#c79595',
-                        borderWidth: 1,
-                        titleFont: {
-                            family: 'Inter',
-                            size: 12,
-                            weight: 'bold'
-                        },
-                        bodyFont: {
-                            family: 'Inter',
-                            size: 11
-                        },
-                        padding: 12,
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': ' + context.parsed.y.toLocaleString();
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        ticks: {
-                            callback: function(value) {
-                                return value.toLocaleString();
-                            },
-                            font: {
-                                family: 'Inter',
-                                size: 11
-                            },
-                            color: '#747c84'
-                        },
-                        grid: {
-                            color: '#e5e7eb',
-                            borderColor: '#1c2023',
-                            borderWidth: 2
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            font: {
-                                family: 'Inter',
-                                size: 11
-                            },
-                            color: '#747c84'
-                        },
-                        grid: {
-                            display: false,
-                            borderColor: '#1c2023',
-                            borderWidth: 2
-                        }
-                    }
-                }
-            }
-        });
-    }
-    
-    // Load data on page load
-    loadCensusData();
-    </script>
+    </main>
+    <footer>
+        <div id="footer-data">
+            <small><a href="census.jsonl" download="census.jsonl">data</a></small>
+            <small><a href="https://github.com/nyonson/bitcoin-node-census" target="_blank" rel="noopener noreferrer">source</a></small>
+        </div>
+        <small xmlns:cc="http://creativecommons.org/ns#" >
+              <a href="https://creativecommons.org/publicdomain/zero/1.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer">Public Domain</a>
+        </small>
+    </footer>
+    <script type="module" src="census.js"></script>
 </body>
 </html>

@@ -31,6 +31,9 @@
             if [ -f site/favicon.svg ]; then
               cp site/favicon.svg $out/share/site/
             fi
+            if [ -f site/census.js ]; then
+              cp site/census.js $out/share/site/
+            fi
           '';
           
           meta = with pkgs.lib; {
@@ -214,6 +217,12 @@
                 else
                   echo "Warning: No favicon.svg found in package"
                 fi
+                
+                if [ -f ${cfg.package}/share/site/census.js ]; then
+                  cp -f ${cfg.package}/share/site/census.js site/
+                else
+                  echo "Warning: No census.js found in package"
+                fi
               '';
               
               script = ''
@@ -250,6 +259,11 @@
                   ${pkgs.google-cloud-sdk}/bin/gcloud storage objects update \
                     ${cfg.gcp.bucket}/index.html \
                     --cache-control="max-age=300" \
+                    2>/dev/null || true
+                  # Medium cache for JavaScript files (1 hour - may be updated with functionality changes)
+                  ${pkgs.google-cloud-sdk}/bin/gcloud storage objects update \
+                    ${cfg.gcp.bucket}/census.js \
+                    --cache-control="max-age=3600" \
                     2>/dev/null || true
                   # Longer cache for static assets like favicon (1 day - rarely changes)
                   ${pkgs.google-cloud-sdk}/bin/gcloud storage objects update \
