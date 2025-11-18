@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.7
+
+* Make site directory readable.
+
 ## v0.1.6
 
 * Drop GCP integration in flake.
