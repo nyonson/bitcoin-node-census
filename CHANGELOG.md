@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.6
+
+* Drop GCP integration in flake.
+
 ## v0.1.5
 
 * Site revamp.
