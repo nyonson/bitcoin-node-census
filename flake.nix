@@ -135,6 +135,7 @@
               group = cfg.group;
               home = cfg.dataDir;
               createHome = true;
+              homeMode = "0755";
             };
 
             users.groups.${cfg.group} = {};
