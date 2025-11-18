@@ -1,7 +1,7 @@
 # Every commit on the master branch is expected to have working `check` and `test-*` recipes.
 #
 # The recipes make heavy use of `rustup`'s toolchain syntax (e.g. `cargo +nightly`). `rustup` is
-# required on the system in order to intercept the `cargo` commands and to install and use the appropriate toolchain with components. 
+# required on the system in order to intercept the `cargo` commands and to install and use the appropriate toolchain with components.
 
 NIGHTLY_TOOLCHAIN := "nightly-2025-07-10"
 STABLE_TOOLCHAIN := "1.88.0"
@@ -39,7 +39,7 @@ STABLE_TOOLCHAIN := "1.88.0"
 @test:
   # Run all tests.
   # "--all-features" for highest coverage, assuming features are additive so no conflicts.
-  # "--all-targets" runs `lib` (unit, integration), `bin`, `test`, `bench`, `example` tests, but not doc code. 
+  # "--all-targets" runs `lib` (unit, integration), `bin`, `test`, `bench`, `example` tests, but not doc code.
   cargo +{{STABLE_TOOLCHAIN}} test --all-features --all-targets
 
 # Run census.
@@ -51,7 +51,7 @@ STABLE_TOOLCHAIN := "1.88.0"
 # Publish a new version.
 @publish version remote="upstream":
   # Requires write privileges on upsream repository.
-   
+
   # Publish guardrails: be on a clean master, updated changelog, updated manifest.
   if ! git diff --quiet || ! git diff --cached --quiet; then \
     echo "publish: Uncommitted changes"; exit 1; fi
@@ -76,4 +76,4 @@ STABLE_TOOLCHAIN := "1.88.0"
 
 # Serve report locally.
 @serve:
-  cd site && python -m http.server 8000
+  python3 -m http.server 8000 --directory {{justfile_directory()}}/site

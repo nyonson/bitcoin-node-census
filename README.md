@@ -27,7 +27,7 @@ Add to your `flake.nix`:
   inputs = {
     bitcoin-node-census.url = "github:nyonson/bitcoin-node-census";
   };
-  
+
   outputs = { self, nixpkgs, bitcoin-node-census }:
     nixpkgs.lib.nixosConfigurations.yourhost = nixpkgs.lib.nixosSystem {
       modules = [
@@ -44,27 +44,14 @@ And configure it:
 {
   services.bitcoin-node-census = {
     enable = true;
-    
-    # Seed node configuration
+
     seedNode = {
       address = "192.168.1.238";
       port = 8333;
     };
-    
-    # Performance tuning
     concurrent = 32;
-    
-    # Schedule (systemd calendar format)
     interval = "weekly";  # or "daily", "hourly", "monthly", etc.
-    
-    # Data storage
     dataDir = "/var/lib/bitcoin-node-census";
-    
-    # Optional: GCP publishing
-    gcp = {
-      bucket = "gs://my-census-bucket";
-      credentialsFile = "/run/secrets/gcp-service-account.json";
-    };
   };
 }
 ```
@@ -72,17 +59,10 @@ And configure it:
 The service is designed to run automatically on the configured schedule, but you can test it manually.
 
 ```bash
-# Start a census run (non-blocking)
+# Start a census run (non-blocking).
 sudo systemctl start --no-block bitcoin-node-census
-
-# Monitor progress in real-time
-sudo journalctl -u bitcoin-node-census -f
-
-# Check service status
+# Check service status.
 sudo systemctl status bitcoin-node-census
-
-# View generated data
-sudo ls -la /var/lib/bitcoin-node-census/site/
 ```
 
 **Note**: Census operations can take several hours to complete as they crawl the entire bitcoin network. Use `--no-block` to avoid hanging your terminal session.
