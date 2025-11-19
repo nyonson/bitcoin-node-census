@@ -78,7 +78,7 @@
 
             package = mkOption {
               type = types.package;
-              default = self.packages.${pkgs.system}.bitcoin-node-census;
+              default = self.packages.${pkgs.stdenv.hostPlatform.system}.bitcoin-node-census;
               defaultText = literalExpression "pkgs.bitcoin-node-census";
               description = "The bitcoin-node-census package to use";
             };
