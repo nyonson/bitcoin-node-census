@@ -14,7 +14,7 @@
 
 Crawl the bitcoin network and aggregate stats for easy tracking.
 
-Data published at [census.yonson.dev](https://census.yonson.dev/).
+Data published at [census.yonson.dev](https://census.yonson.dev/) and [census.labs.yonson.dev](https://census.labs.yonson.dev/).
 
 ## Usage
 
