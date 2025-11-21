@@ -10,6 +10,7 @@ STABLE_TOOLCHAIN := "1.88.0"
     just --list
 
 # Quick check including lints and formatting. Run "fix" mode for auto-fixes.
+[group('development')]
 @check mode="verify":
   # Use nightly toolchain for modern format and lint rules.
   # Ensure the toolchain is installed and has the necessary components.
@@ -17,6 +18,7 @@ STABLE_TOOLCHAIN := "1.88.0"
   just _check-{{mode}}
 
 # Verify check, fails if anything is off. Good for CI.
+[group('development')]
 @_check-verify:
   # Cargo's wrapper for rustfmt predates workspaces, so uses the "--all" flag instead of "--workspaces".
   cargo +{{NIGHTLY_TOOLCHAIN}} fmt --check --all
@@ -29,6 +31,7 @@ STABLE_TOOLCHAIN := "1.88.0"
   RUSTDOCFLAGS="-D warnings" cargo +{{STABLE_TOOLCHAIN}} doc --all-features --no-deps
 
 # Attempt any auto-fixes for format and lints.
+[group('development')]
 @_check-fix:
   # No --check flag to actually apply formatting.
   cargo +{{NIGHTLY_TOOLCHAIN}} fmt --all
@@ -36,6 +39,7 @@ STABLE_TOOLCHAIN := "1.88.0"
   cargo +{{NIGHTLY_TOOLCHAIN}} clippy --all-features --all-targets --fix --allow-dirty -- -D warnings
 
 # Run the test suite.
+[group('development')]
 @test:
   # Run all tests.
   # "--all-features" for highest coverage, assuming features are additive so no conflicts.
@@ -43,12 +47,19 @@ STABLE_TOOLCHAIN := "1.88.0"
   cargo +{{STABLE_TOOLCHAIN}} test --all-features --all-targets
 
 # Run census.
+[group('development')]
 @run address port="8333":
   # Simply appending data to the file since each run is a "full" (not incremental) view of the world. A data point.
   cargo +{{STABLE_TOOLCHAIN}} run --release -- run --address {{address}} --port {{port}} --format jsonl >> site/census.jsonl
   echo "Census result appended to site/census.jsonl"
 
+# Serve report locally.
+[group('web')]
+@serve:
+  python3 -m http.server 8000 --directory {{justfile_directory()}}/site
+
 # Publish a new version.
+[group('publish')]
 @publish version remote="upstream": schema
   # Requires write privileges on upsream repository.
 
@@ -74,10 +85,7 @@ STABLE_TOOLCHAIN := "1.88.0"
   git tag -a v{{version}} -m "Release v{{version}}"
   git push {{remote}} v{{version}}
 
-# Serve report locally.
-@serve:
-  python3 -m http.server 8000 --directory {{justfile_directory()}}/site
-
 # Generate JSON schema documentation.
+[group('publish')]
 @schema:
   cargo +{{STABLE_TOOLCHAIN}} run --quiet --example generate-schema --features schema > {{justfile_directory()}}/docs/census.schema.json
