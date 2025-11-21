@@ -164,23 +164,17 @@
                 Group = cfg.group;
                 WorkingDirectory = cfg.dataDir;
 
-                PrivateTmp = true;
+                # Essential security.
                 ProtectSystem = "strict";
                 ProtectHome = true;
                 ReadWritePaths = [ cfg.dataDir ];
-                NoNewPrivileges = true;
-                RestrictNamespaces = true;
-                RestrictRealtime = true;
-                RestrictSUIDSGID = true;
-                LockPersonality = true;
-                ProtectClock = true;
-                ProtectHostname = true;
-                ProtectKernelLogs = true;
-                ProtectKernelModules = true;
-                ProtectKernelTunables = true;
-                ProtectControlGroups = true;
+
+                # Network restrictions.
                 RestrictAddressFamilies = [ "AF_INET" "AF_INET6" ];
-                SystemCallFilter = [ "@system-service" "~@privileged" ];
+
+                # Basic hardening.
+                NoNewPrivileges = true;
+                PrivateTmp = true;
               };
 
               preStart = optionalString cfg.web.enable ''
