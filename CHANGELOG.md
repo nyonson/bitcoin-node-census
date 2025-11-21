@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+* Make web assets optional in flake.
+
 ## v0.1.7
 
 * Make site directory readable.

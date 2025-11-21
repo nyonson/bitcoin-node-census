@@ -127,6 +127,20 @@
               default = "bitcoin-census";
               description = "Group to run the service as";
             };
+
+            web = {
+              enable = mkEnableOption "web interface for census data" // {
+                default = false;
+              };
+
+              assetsDir = mkOption {
+                type = types.path;
+                default = "${cfg.package}/share/site";
+                defaultText = literalExpression "\${cfg.package}/share/site";
+                description = "Path to web interface files to deploy.";
+                example = literalExpression "./my-custom-site";
+              };
+            };
           };
 
           config = mkIf cfg.enable {
@@ -150,7 +164,6 @@
                 Group = cfg.group;
                 WorkingDirectory = cfg.dataDir;
 
-                # Security hardening
                 PrivateTmp = true;
                 ProtectSystem = "strict";
                 ProtectHome = true;
@@ -170,28 +183,9 @@
                 SystemCallFilter = [ "@system-service" "~@privileged" ];
               };
 
-              preStart = ''
-                # Ensure site directory exists.
-                mkdir -p site
-
-                # Always copy static files from package to ensure they're up to date.
-                if [ -f ${cfg.package}/share/site/index.html ]; then
-                  cp -f ${cfg.package}/share/site/index.html site/
-                else
-                  echo "Warning: No index.html found in package"
-                fi
-
-                if [ -f ${cfg.package}/share/site/favicon.svg ]; then
-                  cp -f ${cfg.package}/share/site/favicon.svg site/
-                else
-                  echo "Warning: No favicon.svg found in package"
-                fi
-
-                if [ -f ${cfg.package}/share/site/census.js ]; then
-                  cp -f ${cfg.package}/share/site/census.js site/
-                else
-                  echo "Warning: No census.js found in package"
-                fi
+              preStart = optionalString cfg.web.enable ''
+                # Copy web interface files.
+                cp -f ${cfg.web.assetsDir}/* .
               '';
 
               script = ''
@@ -202,7 +196,7 @@
                   --port ${toString cfg.seedNode.port} \
                   --concurrent ${toString cfg.concurrent} \
                   --format jsonl \
-                  >> site/census.jsonl
+                  >> census.jsonl
 
                 echo "Census complete!"
               '';
