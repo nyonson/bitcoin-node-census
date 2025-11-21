@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 
 /// Feature statistics for a specific connection type.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
 pub struct ConnectionTypeFeatures {
     /// Total number of nodes for this connection type.
     pub total_nodes: usize,
@@ -61,6 +62,7 @@ impl ConnectionTypeFeatures {
 
 /// Statistics broken down by connection type.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
 pub struct ConnectionTypeStats {
     /// IPv4 clearnet connections.
     pub ipv4: ConnectionTypeFeatures,
@@ -134,6 +136,7 @@ impl ConnectionTypeStats {
 
 /// Statistics about node features and capabilities.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
 pub struct FeatureStats {
     /// Total number of nodes analyzed (sum across all connection types).
     pub total_nodes: usize,

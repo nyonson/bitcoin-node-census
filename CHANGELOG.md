@@ -3,6 +3,7 @@
 ## Unreleased
 
 * Make web assets optional in flake.
+* Add schema docs.
 
 ## v0.1.7
 

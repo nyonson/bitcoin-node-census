@@ -49,7 +49,7 @@ STABLE_TOOLCHAIN := "1.88.0"
   echo "Census result appended to site/census.jsonl"
 
 # Publish a new version.
-@publish version remote="upstream":
+@publish version remote="upstream": schema
   # Requires write privileges on upsream repository.
 
   # Publish guardrails: be on a clean master, updated changelog, updated manifest.
@@ -77,3 +77,7 @@ STABLE_TOOLCHAIN := "1.88.0"
 # Serve report locally.
 @serve:
   python3 -m http.server 8000 --directory {{justfile_directory()}}/site
+
+# Generate JSON schema documentation.
+@schema:
+  cargo +{{STABLE_TOOLCHAIN}} run --quiet --example generate-schema --features schema > {{justfile_directory()}}/docs/census.schema.json

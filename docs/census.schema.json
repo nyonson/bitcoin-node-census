@@ -1,0 +1,199 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CensusReport",
+  "description": "A census report containing statistics from a network crawl.",
+  "type": "object",
+  "required": [
+    "census_version",
+    "duration_seconds",
+    "stats",
+    "timestamp"
+  ],
+  "properties": {
+    "census_version": {
+      "description": "Version of the census tool.",
+      "type": "string"
+    },
+    "duration_seconds": {
+      "description": "Duration of the census in seconds.",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "stats": {
+      "description": "Feature statistics.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/FeatureStats"
+        }
+      ]
+    },
+    "timestamp": {
+      "description": "When the census was taken (Unix timestamp in seconds).",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "total_contacted": {
+      "description": "Total number of nodes contacted (listening + non-listening).",
+      "default": 0,
+      "type": "integer",
+      "format": "uint",
+      "minimum": 0.0
+    }
+  },
+  "definitions": {
+    "ConnectionTypeFeatures": {
+      "description": "Feature statistics for a specific connection type.",
+      "type": "object",
+      "required": [
+        "compact_filters",
+        "total_nodes",
+        "v2_and_filters",
+        "v2_transport"
+      ],
+      "properties": {
+        "compact_filters": {
+          "description": "Nodes supporting compact block filters (BIP-157/158).",
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "total_nodes": {
+          "description": "Total number of nodes for this connection type.",
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "v2_and_filters": {
+          "description": "Nodes supporting both v2 transport AND compact filters.",
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "v2_transport": {
+          "description": "Nodes supporting v2 transport (BIP-324).",
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        }
+      }
+    },
+    "ConnectionTypeStats": {
+      "description": "Statistics broken down by connection type.",
+      "type": "object",
+      "required": [
+        "cjdns",
+        "i2p",
+        "ipv4",
+        "ipv6",
+        "tor_v2",
+        "tor_v3",
+        "unknown"
+      ],
+      "properties": {
+        "cjdns": {
+          "description": "CJDNS mesh network addresses.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/ConnectionTypeFeatures"
+            }
+          ]
+        },
+        "i2p": {
+          "description": "I2P addresses.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/ConnectionTypeFeatures"
+            }
+          ]
+        },
+        "ipv4": {
+          "description": "IPv4 clearnet connections.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/ConnectionTypeFeatures"
+            }
+          ]
+        },
+        "ipv6": {
+          "description": "IPv6 clearnet connections.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/ConnectionTypeFeatures"
+            }
+          ]
+        },
+        "tor_v2": {
+          "description": "Tor v2 onion addresses (deprecated).",
+          "allOf": [
+            {
+              "$ref": "#/definitions/ConnectionTypeFeatures"
+            }
+          ]
+        },
+        "tor_v3": {
+          "description": "Tor v3 onion addresses.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/ConnectionTypeFeatures"
+            }
+          ]
+        },
+        "unknown": {
+          "description": "Unknown/future address types.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/ConnectionTypeFeatures"
+            }
+          ]
+        }
+      }
+    },
+    "FeatureStats": {
+      "description": "Statistics about node features and capabilities.",
+      "type": "object",
+      "required": [
+        "compact_filters",
+        "connection_types",
+        "total_nodes",
+        "v2_and_filters",
+        "v2_transport"
+      ],
+      "properties": {
+        "compact_filters": {
+          "description": "Nodes supporting compact block filters (BIP-157/158) (sum across all connection types).",
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "connection_types": {
+          "description": "Detailed breakdown by connection type.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/ConnectionTypeStats"
+            }
+          ]
+        },
+        "total_nodes": {
+          "description": "Total number of nodes analyzed (sum across all connection types).",
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "v2_and_filters": {
+          "description": "Nodes supporting both v2 transport AND compact filters (sum across all connection types).",
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "v2_transport": {
+          "description": "Nodes supporting v2 transport (BIP-324) (sum across all connection types).",
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        }
+      }
+    }
+  }
+}

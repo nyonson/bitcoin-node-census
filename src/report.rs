@@ -14,6 +14,7 @@ pub enum OutputFormat {
 
 /// A census report containing statistics from a network crawl.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
 pub struct CensusReport {
     /// When the census was taken (Unix timestamp in seconds).
     pub timestamp: u64,
