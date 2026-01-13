@@ -141,9 +141,36 @@
                 example = literalExpression "./my-custom-site";
               };
             };
+
+            backup = {
+              enable = mkEnableOption "backup census data after each run" // {
+                default = false;
+              };
+
+              destination = mkOption {
+                type = types.str;
+                default = "";
+                description = "Backup destination (e.g., 'gemini2.lan:/var/backups/census/')";
+                example = "gemini2.lan:/var/backups/census/";
+              };
+
+              command = mkOption {
+                type = types.nullOr types.str;
+                default = null;
+                description = "Custom backup command. If null, uses scp with timestamped filename.";
+                example = literalExpression ''"''${pkgs.rsync}/bin/rsync -a census.jsonl ''${cfg.backup.destination}"'';
+              };
+            };
           };
 
           config = mkIf cfg.enable {
+            assertions = [
+              {
+                assertion = !cfg.backup.enable || cfg.backup.destination != "";
+                message = "services.bitcoin-node-census.backup.destination must be set when backup.enable is true";
+              }
+            ];
+
             users.users.${cfg.user} = {
               isSystemUser = true;
               group = cfg.group;
@@ -193,6 +220,17 @@
                   >> census.jsonl
 
                 echo "Census complete!"
+              '' + optionalString cfg.backup.enable ''
+                echo "Backing up census data..."
+                ${if cfg.backup.command != null then
+                  cfg.backup.command
+                else
+                  ''
+                    TIMESTAMP=$(${pkgs.coreutils}/bin/date +%Y-%m-%d)
+                    ${pkgs.openssh}/bin/scp census.jsonl "${cfg.backup.destination}census-$TIMESTAMP.jsonl"
+                    echo "Backup complete: census-$TIMESTAMP.jsonl"
+                  ''
+                }
               '';
             };
 
