@@ -3,7 +3,7 @@ name: Update Toolchains
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * 7'
+    - cron: '0 0 * * 0'  # Sunday at midnight UTC (0 = Sunday, 6 = Saturday)
 
 permissions:
   contents: write
